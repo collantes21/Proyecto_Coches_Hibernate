@@ -22,7 +22,7 @@
       <Button fx:id="btLimpiar" layoutX="347.0" layoutY="313.0" mnemonicParsing="false" onAction="#resetAplicacion" text="Limpiar" />
       <Button fx:id="btBorrar" layoutX="245.0" layoutY="313.0" mnemonicParsing="false" onAction="#borrarCoche" onMouseClicked="#borrarCoche" text="Borrar" />
       <Button fx:id="btModificar" layoutX="144.0" layoutY="313.0" mnemonicParsing="false" onAction="#modificarCoche" text="Modificar" />
-      <TableView fx:id="tablaCoches" layoutX="21.0" layoutY="375.0" prefHeight="200.0" prefWidth="562.0">
+      <TableView fx:id="tablaCoches" layoutX="21.0" layoutY="375.0" prefHeight="200.0" onMouseClicked="#cargarDatos" prefWidth="562.0">
         <columns>
           <TableColumn fx:id="colMarca" prefWidth="142.0" text="Marca" />
           <TableColumn fx:id="colModelo" prefWidth="127.0" text="Modelo" />

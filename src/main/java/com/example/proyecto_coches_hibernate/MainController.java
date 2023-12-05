@@ -2,16 +2,13 @@ package com.example.proyecto_coches_hibernate;
 
 import com.example.proyecto_coches_hibernate.dao.CocheDAO;
 import com.example.proyecto_coches_hibernate.model.Coche;
+import com.example.proyecto_coches_hibernate.util.AlertUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javax.transaction.SystemException;
@@ -38,16 +35,16 @@ public class MainController implements Initializable {
     String[] tipos_de_coches={"SUB", "Monovolumen", "Hibrido", "Furgoneta"};
 
     @FXML
-    private TableColumn<?, ?> colMarca;
+    private TableColumn colMarca;
 
     @FXML
-    private TableColumn<?, ?> colMatricula;
+    private TableColumn colMatricula;
 
     @FXML
-    private TableColumn<?, ?> colModelo;
+    private TableColumn colModelo;
 
     @FXML
-    private TableColumn<?, ?> colTipo;
+    private TableColumn colTipo;
 
     @FXML
     private TableView<Coche> tablaCoches;
@@ -69,12 +66,27 @@ public class MainController implements Initializable {
         String matricula=txtMatricula.getText().toString();
         String marca=txtMarca.getText().toString();
         String modelo=txtModelo.getText().toString();
+
+
+        if (matricula.isEmpty() || marca.isEmpty() || modelo.isEmpty() || cbTipo.getSelectionModel().isEmpty()){
+
+            AlertUtils.mostrarAlerta(Alert.AlertType.INFORMATION, "Datos Erroneos", "Todos los campos deben estar completos. No se añadio el coche");
+            actualizarTableView();
+            activarCampos();
+            vaciarCampos();
+            return;
+
+        }
+
         String tipo=cbTipo.getValue().toString();
 
         Coche coche=new Coche(matricula, marca, modelo, tipo);
 
         cochedao.guardarCoche(coche);
 
+        actualizarTableView();
+        activarCampos();
+        vaciarCampos();
     }
 
     @FXML
@@ -83,6 +95,10 @@ public class MainController implements Initializable {
         String matricula=txtMatricula.getText().toString();
 
         cochedao.borrarCoche(matricula);
+
+        actualizarTableView();
+        activarCampos();
+        vaciarCampos();
 
     }
 
@@ -98,21 +114,27 @@ public class MainController implements Initializable {
 
         cochedao.modificarCoche(coche);
 
+        actualizarTableView();
+        activarCampos();
+        vaciarCampos();
+
     }
 
     @FXML
     void resetAplicacion(ActionEvent event) {
-
-    }
-
-    public void camposVacios(ActionEvent event) {
-
         txtMatricula.setText("");
         txtMarca.setText("");
         txtModelo.setText("");
-        //Falta comboBox
-
+        cbTipo.setValue("");
     }
+
+    private void vaciarCampos(){
+        txtMatricula.setText("");
+        txtMarca.setText("");
+        txtModelo.setText("");
+        cbTipo.setValue("");
+    }
+
     private void actualizarTableView(){
 
         List<Coche> coches = cochedao.listarCoches();
@@ -128,6 +150,16 @@ public class MainController implements Initializable {
 
     }
 
+    public void cargarDatos(){
+
+        Coche coche = (Coche) this.tablaCoches.getSelectionModel().getSelectedItem();
+        this.txtMatricula.setText(coche.getMatricula());
+        this.txtModelo.setText(coche.getModelo());
+        this.txtMarca.setText(coche.getMarca());
+        this.cbTipo.setValue(coche.getTipo());
+        txtMatricula.setDisable(true);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -135,6 +167,14 @@ public class MainController implements Initializable {
         //sacar datos en comboBox
         cbTipo.getItems().addAll(tipos_de_coches);
 
+    }
+
+    private void activarCampos(){
+
+        txtMatricula.setDisable(false);
+        txtModelo.setDisable(false);
+        txtMarca.setDisable(false);
+        cbTipo.setDisable(false);
     }
 }
 
